@@ -1,0 +1,30 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<h1>Card Entries</h1>
+
+{% csrf_token %}
+{{ form.as_p }}
+
+<hr>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Rarity</th>
+        <th>Set</th>
+        <th>Quantity</th>
+        <th>Value</th>
+    </tr>
+    {% for card in card_entries %}
+    <tr>
+        <td>{{ card.name|default:"-" }}</td>
+        <td>{{ card.get_rarity_display }}</td>
+        <td>{{ card.set_name|default:"-" }}</td>
+        <td>{{ card.quantity }}</td>
+        <td>{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

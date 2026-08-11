@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokébulk Tracker</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'home' %}">Bulk</a>
+        <a href="{% url 'cards' %}">Cards</a>
+        <a href="{% url 'totals' %}">Totals</a>
+    </nav>
+    <hr>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
