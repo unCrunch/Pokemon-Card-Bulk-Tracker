@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce
+
 from .models import BulkCount, Rarity, CardEntry
 from .forms import CardEntryForm
 
-# Create your views here.
 def totals(request):
     card_entries = CardEntry.objects.all()
     
@@ -44,7 +44,7 @@ def totals(request):
 
 def cards(request):
     if request.method == "POST":
-        form = CardEntryForm
+        form = CardEntryForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("cards")
@@ -54,6 +54,25 @@ def cards(request):
     card_entries = CardEntry.objects.all().order_by("-added_on")
     context = {"form": form, "card_entries": card_entries}
     return render(request, "inventory/cards.html", context)
+
+def edit_card(request, card_id):
+    card = get_object_or_404(CardEntry, id=card_id)
+    if request.method == "POST":
+        form = CardEntryForm(request.POST, instance=card)
+        if form.is_valid():
+            form.save()
+            return redirect("cards")
+    else:
+        form = CardEntryForm(instance=card)
+    
+    context = {"form": form, "card": card}
+    return render(request, "inventory/edit_card.html", context)
+
+def del_card(request, card_id):
+    card = get_object_or_404(CardEntry, id=card_id)
+    if request.method == "POST":
+        card.delete()
+    return redirect("cards")
 
 def home(request):
     if request.method == "POST":

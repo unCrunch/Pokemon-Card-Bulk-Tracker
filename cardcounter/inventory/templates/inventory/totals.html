@@ -2,5 +2,36 @@
 
 {% block content %}
 <h1>Total Count</h1>
-<p>blkah blkah bklagh soon or whatever fucking hell bro coding pmfoooooo what the fuck</p>
+
+<h2>Overall Estimated Card Value: ${{ total_value }}</h2>
+
+<h3>By Rarity</h3>
+<table>
+    <tr>
+        <th>Rarity</th>
+        <th>Count</th>
+        <th>Value</th>
+    </tr>
+    {% for row in rarity_breakdown %}
+    <tr>
+        <td>{{ row.label }}</td>
+        <td>{{ row.count }}</td>
+        <td>${{ row.value }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Bulk Counts</h3>
+<table>
+    <tr>
+        <th>Rarity</th>
+        <th>Quantity</th>
+    </tr>
+    {% for bulk in bulk_counts %}
+    <tr>
+        <td>{{ bulk.get_rarity_display }}</td>
+        <td>{{ bulk.quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

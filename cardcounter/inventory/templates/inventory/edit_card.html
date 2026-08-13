@@ -1,0 +1,13 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<h1>Edit Card: {{ card.name|default:"Unnamed Card" }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>
+
+<a href="{% url 'cards' %}">Cancel</a>
+{% endblock %}

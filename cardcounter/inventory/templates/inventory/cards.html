@@ -3,8 +3,11 @@
 {% block content %}
 <h1>Card Entries</h1>
 
-{% csrf_token %}
-{{ form.as_p }}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Card</button>
+</form>
 
 <hr>
 
@@ -15,6 +18,7 @@
         <th>Set</th>
         <th>Quantity</th>
         <th>Value</th>
+        <th>Actions</th>
     </tr>
     {% for card in card_entries %}
     <tr>
@@ -23,8 +27,16 @@
         <td>{{ card.set_name|default:"-" }}</td>
         <td>{{ card.quantity }}</td>
         <td>{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}</td>
+        <td>
+            <a href="{% url 'edit_card' card.id %}">Edit</a>
+            <form method="post" action="{% url 'del_card' card.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>
+
 
 {% endblock %}
