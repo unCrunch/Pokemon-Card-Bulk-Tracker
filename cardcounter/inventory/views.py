@@ -1,11 +1,45 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Sum, F, DecimalField
+from django.db.models.functions import Coalesce
 from .models import BulkCount, Rarity, CardEntry
 from .forms import CardEntryForm
 
 # Create your views here.
 def totals(request):
-    context = {}
+    card_entries = CardEntry.objects.all()
+    
+    #total value = sum of (qty*est_value)
+    total_value = card_entries.aggregate(
+        total=Coalesce(
+            Sum(F("quantity") *F("estimated_value"), output_field=DecimalField()), 0, output_field=DecimalField(),
+        )
+    ) ["total"]
+    
+    #breakdown per priced rarity tier
+    rarity_breakdown = []
+    for rarity in Rarity.priced_tiers():
+        tier_entries = card_entries.filter(rarity=rarity)
+        tier_count = tier_entries.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
+        tier_value = tier_entries.aggregate(
+            total=Coalesce(
+                Sum(F("quantity") *F("estimated_value"), output_field=DecimalField()), 0, output_field=DecimalField(),
+            )
+        )["total"]
+        rarity_breakdown.append({
+            "label": Rarity(rarity).label,
+            "count": tier_count,
+            "value": tier_value,
+        })
+    
+    bulk_counts = BulkCount.objects.all()
+    
+    
+    context = {
+        "total_value": total_value,
+        "rarity_breakdown": rarity_breakdown,
+        "bulk_counts": bulk_counts,
+    }
     return render(request, "inventory/totals.html", context)
 
 def cards(request):
