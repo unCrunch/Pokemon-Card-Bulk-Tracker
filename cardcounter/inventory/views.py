@@ -2,9 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce
+from decimal import Decimal
 
 from .models import BulkCount, Rarity, CardEntry
 from .forms import CardEntryForm
+
+# rough estimates in CAD for bulk prices based on local shops
+BULK_RATES = {
+    Rarity.COMMON_UNCOMMON: Decimal("0.010"),
+    Rarity.COMMON_UNCOMMON_REVERSE: Decimal("0.045"),
+    Rarity.RARE_HOLO: Decimal("0.045"),
+    Rarity.RARE_REVERSE: Decimal("0.045"),
+}
 
 def totals(request):
     card_entries = CardEntry.objects.all()
@@ -37,13 +46,27 @@ def totals(request):
     bulk_counts = BulkCount.objects.all()
     total_bulk_count = bulk_counts.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
     
+    bulk_breakdown = []
+    total_bulk_value = 0
+    for bulk in bulk_counts:
+        rate = BULK_RATES.get(bulk.rarity, Decimal("0"))
+        value = bulk.quantity * rate
+        bulk_breakdown.append({
+            "label": bulk.get_rarity_display(),
+            "quantity": bulk.quantity,
+            "value": value,
+        })
+        total_bulk_value += value
+    grand_total = total_value + total_bulk_value
     
     context = {
         "total_value": total_value,
         "rarity_breakdown": rarity_breakdown,
         "total_card_count": total_card_count,
-        "bulk_counts": bulk_counts,
+        "bulk_breakdown": bulk_breakdown,
         "total_bulk_count": total_bulk_count,
+        "total_bulk_value": total_bulk_value,
+        "grand_total": grand_total,
     }
     return render(request, "inventory/totals.html", context)
 

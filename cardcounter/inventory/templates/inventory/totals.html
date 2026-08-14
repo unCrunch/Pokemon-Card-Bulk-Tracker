@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Total Count</h1>
 
-<h2>Overall Estimated Card Value: ${{ total_value|floatformat:2 }}</h2>
+<h2>Overall Estimated Collection Value: ${{ grand_total|floatformat:2 }}</h2>
 
 <h3>By Rarity</h3>
 <table>
@@ -31,16 +31,20 @@
     <tr>
         <th>Rarity</th>
         <th>Quantity</th>
+        <th>Estimated Value</th>
     </tr>
-    {% for bulk in bulk_counts %}
+    {% for bulk in bulk_breakdown %}
     <tr>
-        <td>{{ bulk.get_rarity_display }}</td>
+        <td>{{ bulk.label }}</td>
         <td>{{ bulk.quantity }}</td>
+        <td>${{ bulk.value|floatformat:3 }}</td>
     </tr>
     {% endfor %}
     <tr>
         <td><strong>Total</strong></td>
         <td><strong>{{ total_bulk_count }}</strong></td>
+        <td><strong>${{ total_bulk_value|floatformat:3 }}</strong></td>
     </tr>
 </table>
+<p><em>Estimated bulk values are rough per-card averages based on shop buy rates, not live market prices.</em></p>
 {% endblock %}
