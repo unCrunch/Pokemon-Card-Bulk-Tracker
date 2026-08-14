@@ -11,6 +11,13 @@
         <a href="{% url 'cards' %}">Cards</a>
         <a href="{% url 'totals' %}">Totals</a>
     </nav>
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li style="color: red;">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <hr>
     {% block content %}
     {% endblock %}

@@ -18,6 +18,7 @@ def totals(request):
     
     #breakdown per priced rarity tier
     rarity_breakdown = []
+    total_card_count = 0
     for rarity in Rarity.priced_tiers():
         tier_entries = card_entries.filter(rarity=rarity)
         tier_count = tier_entries.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
@@ -31,14 +32,18 @@ def totals(request):
             "count": tier_count,
             "value": tier_value,
         })
+        total_card_count += tier_count
     
     bulk_counts = BulkCount.objects.all()
+    total_bulk_count = bulk_counts.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
     
     
     context = {
         "total_value": total_value,
         "rarity_breakdown": rarity_breakdown,
+        "total_card_count": total_card_count,
         "bulk_counts": bulk_counts,
+        "total_bulk_count": total_bulk_count,
     }
     return render(request, "inventory/totals.html", context)
 
@@ -82,6 +87,9 @@ def home(request):
             field_name = f"quantity_{rarity}"
             value = request.POST.get(field_name, "").strip()
             if value == "":
+                continue
+            if not value.isdigit():
+                messages.error(request, f"'{value}' is not a valid number for {Rarity(rarity).label}.")
                 continue
             
             amount = int(value)

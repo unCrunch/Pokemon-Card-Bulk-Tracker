@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Total Count</h1>
 
-<h2>Overall Estimated Card Value: ${{ total_value }}</h2>
+<h2>Overall Estimated Card Value: ${{ total_value|floatformat:2 }}</h2>
 
 <h3>By Rarity</h3>
 <table>
@@ -16,9 +16,14 @@
     <tr>
         <td>{{ row.label }}</td>
         <td>{{ row.count }}</td>
-        <td>${{ row.value }}</td>
+        <td>${{ row.value|floatformat:2 }}</td>
     </tr>
     {% endfor %}
+    <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>{{ total_card_count }}</strong></td>
+        <td><strong>${{ total_value|floatformat:2 }}</strong></td>
+    </tr>
 </table>
 
 <h3>Bulk Counts</h3>
@@ -33,5 +38,9 @@
         <td>{{ bulk.quantity }}</td>
     </tr>
     {% endfor %}
+    <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>{{ total_bulk_count }}</strong></td>
+    </tr>
 </table>
 {% endblock %}
