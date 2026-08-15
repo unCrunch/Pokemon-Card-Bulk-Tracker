@@ -2,27 +2,55 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokébulk Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     {% tailwind_css %}
+    <script>
+        if (localStorage.getItem("theme") === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
 </head>
-<body>
-    <nav>
-        <a href="{% url 'home' %}">Bulk</a>
-        <a href="{% url 'cards' %}">Cards</a>
-        <a href="{% url 'totals' %}">Totals</a>
+
+<body class="bg-yellow-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+    <nav class="bg-red-600 dark:bg-red-800 text-white px-6 py-4 flex items-center justify-between shadow-md">
+        <div class="flex gap-6 font-semibold">
+            <a href="{% url 'home' %}" class="hover:text-yellow-300 transition">Bulk</a>
+            <a href="{% url 'cards' %}" class="hover:text-yellow-300 transition">Cards</a>
+            <a href="{% url 'totals' %}" class="hover:text-yellow-300 transition">Totals</a>
+        </div>
+        <button onclick="toggleTheme()"
+            class="bg-yellow-400 text-red-800 px-3 py-1 rounded-full font-bold text-sm hover:bg-yellow-300 transition">
+            <span class="dark:hidden">🌙 Dark</span>
+            <span class="hidden dark:inline">☀️ Light</span>
+        </button>
     </nav>
     {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li style="color: red;">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <hr>
-    {% block content %}
-    {% endblock %}
+    <main class="max-w-4xl mx-auto p-6">
+        <ul class="mb-4 space-y-2">
+            {% for message in messages %}
+            <li
+                class="bg-red-100 text-red-700 border border-red-300 px-4 py-2 rounded-lg dark:bg-red-900 dark:text-red-200 dark:border-red-700">
+                {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <hr>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <script>
+        function toggleTheme() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+        }
+    </script>
 </body>
+
 </html>
