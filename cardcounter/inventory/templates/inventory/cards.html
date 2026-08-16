@@ -1,42 +1,59 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-<h1>Card Entries</h1>
+<h1 class="text-3xl font-bold text-red-600 dark:text-red-400 mb-6 text-center pt-4"
+    style="font-family: 'Fredoka', sans-serif;">Card Entries</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Card</button>
-</form>
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 mb-8">
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for field in form %}
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit"
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-full shadow transition">Add
+            Card</button>
+    </form>
+</div>
 
-<hr>
-
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Rarity</th>
-        <th>Set</th>
-        <th>Quantity</th>
-        <th>Value</th>
-        <th>Actions</th>
-    </tr>
-    {% for card in card_entries %}
-    <tr>
-        <td>{{ card.name|default:"-" }}</td>
-        <td>{{ card.get_rarity_display }}</td>
-        <td>{{ card.set_name|default:"-" }}</td>
-        <td>{{ card.quantity }}</td>
-        <td>{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}</td>
-        <td>
-            <a href="{% url 'edit_card' card.id %}">Edit</a>
-            <form method="post" action="{% url 'del_card' card.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+    <table class="w-full text-left">
+        <thead class="bg-yellow-400 dark:bg-yellow-600 text-red-900 dark:text-gray-900">
+            <tr>
+                <th class="px-4 py-3 font-bold">Name</th>
+                <th class="px-4 py-3 font-bold">Rarity</th>
+                <th class="px-4 py-3 font-bold">Set</th>
+                <th class="px-4 py-3 font-bold">Quantity</th>
+                <th class="px-4 py-3 font-bold">Value</th>
+                <th class="px-4 py-3 font-bold">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for card in card_entries %}
+            <tr class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+                <td class="px-4 py-3">{{ card.name|default:"-" }}</td>
+                <td class="px-4 py-3">{{ card.get_rarity_display }}</td>
+                <td class="px-4 py-3">{{ card.set_name|default:"-" }}</td>
+                <td class="px-4 py-3">{{ card.quantity }}</td>
+                <td class="px-4 py-3">{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}</td>
+                <td class="px-4 py-3 space-x-2 whitespace-nowrap">
+                    <a href="{% url 'edit_card' card.id %}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full transition no-underline">Edit</a>
+                    <form method="post" action="{% url 'del_card' card.id %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1 rounded-full transition">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
