@@ -1,50 +1,68 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-<h1>Total Count</h1>
+<h1 class="text-3xl  text-red-600 dark:text-red-400 mb-6 text-center pt-4" style="font-family: 'Fredoka', sans-serif;">
+    Total Count</h1>
 
-<h2>Overall Estimated Collection Value: ${{ grand_total|floatformat:2 }}</h2>
+<div class="bg-yellow-400 dark:bg-yellow-600 rounded-2xl shadow-md p-6 mb-8 text-center">
+    <p class="text-red-900 dark:text-gray-900 font-semibold text-lg">Overall Estimated Collection Value:</p>
+    <p class="text-red-900 dark:text-gray-900 font-bold text-4xl" style="font-family: 'Fredoka', sans-serif;">
+        ${{ grand_total|floatformat:2 }}</p>
+</div>
 
-<h3>By Rarity</h3>
-<table>
-    <tr>
-        <th>Rarity</th>
-        <th>Count</th>
-        <th>Value</th>
-    </tr>
-    {% for row in rarity_breakdown %}
-    <tr>
-        <td>{{ row.label }}</td>
-        <td>{{ row.count }}</td>
-        <td>${{ row.value|floatformat:2 }}</td>
-    </tr>
-    {% endfor %}
-    <tr>
-        <td><strong>Total</strong></td>
-        <td><strong>{{ total_card_count }}</strong></td>
-        <td><strong>${{ total_value|floatformat:2 }}</strong></td>
-    </tr>
-</table>
+<h2 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-200 pl-2">By Rarity</h2>
+<div class="bg-white dark:bg-gray-800 rounded-2xl shawow-md overflow-hidden mb-8">
+    <table class="w-full text-left">
+        <thead class="bg-yellow-400 dark:bg-yellow-600 text-red-900 dark:text-gray-900">
+            <tr>
+                <th class="px-4 py-3 font-bold">Rarity</th>
+                <th class="px-4 py-3 font-bold">Count</th>
+                <th class="px-4 py-3 font-bold">Value</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for row in rarity_breakdown %}
+            <tr
+                class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+                <td class="px-4 py-3">{{ row.label }}</td>
+                <td class="px-4 py-3">{{ row.count }}</td>
+                <td class="px-4 py-3">${{ row.value|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="bg-gray-100 dark:bg-gray-950 font-bold">
+                <td class="px-4 py-3">Total</td>
+                <td class="px-4 py-3">{{ total_card_count }}</td>
+                <td class="px-4 py-3">${{ total_value|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-<h3>Bulk Counts</h3>
-<table>
-    <tr>
-        <th>Rarity</th>
-        <th>Quantity</th>
-        <th>Estimated Value</th>
-    </tr>
-    {% for bulk in bulk_breakdown %}
-    <tr>
-        <td>{{ bulk.label }}</td>
-        <td>{{ bulk.quantity }}</td>
-        <td>${{ bulk.value|floatformat:3 }}</td>
-    </tr>
-    {% endfor %}
-    <tr>
-        <td><strong>Total</strong></td>
-        <td><strong>{{ total_bulk_count }}</strong></td>
-        <td><strong>${{ total_bulk_value|floatformat:3 }}</strong></td>
-    </tr>
-</table>
-<p><em>Estimated bulk values are rough per-card averages based on shop buy rates, not live market prices.</em></p>
+<h2 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-200 pl-2">Bulk Counts</h2>
+<div class="bg-white dark:bg-gray-800 rounded-2xl shawow-md overflow-hidden">
+    <table class="w-full text-left">
+        <thead class="bg-yellow-400 dark:bg-yellow-600 text-red-900 dark:text-gray-900">
+            <tr>
+                <th class="px-4 py-3 font-bold">Rarity</th>
+                <th class="px-4 py-3 font-bold">Quantity</th>
+                <th class="px-4 py-3 font-bold">Estimated Value</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for bulk in bulk_breakdown %}
+            <tr class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+                <td class="px-4 py-3">{{ bulk.label }}</td>
+                <td class="px-4 py-3">{{ bulk.quantity }}</td>
+                <td class="px-4 py-3">${{ bulk.value|floatformat:3 }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="bg-gray-100 dark:bg-gray-950 font-bold">
+                <td class="px-4 py-3">Total</td>
+                <td class="px-4 py-3">{{ total_bulk_count }}</td>
+                <td class="px-4 py-3">${{ total_bulk_value|floatformat:3 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 italic mt-4">Estimated bulk values are rough per-card averages based on shop buy rates, not live market prices.</p>
 {% endblock %}
