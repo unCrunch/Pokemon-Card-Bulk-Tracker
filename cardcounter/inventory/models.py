@@ -9,8 +9,13 @@ class Rarity(models.TextChoices):
     DOUBLE_RARE = "DOUBLE_RARE", "Double Rare"
     ULTRA_RARE = "ULTRA_RARE", "Ultra Rare"
     HYPER_RARE = "HYPER_RARE", "Hyper Rare"
+    MEGA_HYPER_RARE = "MEGA_HYPER_RARE", "Mega Hyper Rare"
     ILL_RARE = "ILL_RARE", "Illustration Rare"
     SPEC_ILL_RARE = "SPEC_ILL_RARE", "Special Illustration Rare"
+    ACE_SPEC_RARE = "ACE_SPEC_RARE", "ACE SPEC Rare"
+    SHINY_RARE = "SHINY_RARE", "Shiny Rare"
+    SHINY_ULTRA_RARE = "SHINY_ULTRA_RARE", "Shiny Ultra Rare"
+    SECRET_RARE = "SECRET_RARE", "Secret Rare"
     PROMO = "PROMO", "Promo"
     
     @classmethod
@@ -19,7 +24,7 @@ class Rarity(models.TextChoices):
     
     @classmethod
     def priced_tiers(cls):
-        return [cls.DOUBLE_RARE, cls.ULTRA_RARE, cls.HYPER_RARE, cls.ILL_RARE, cls.SPEC_ILL_RARE, cls.PROMO]
+        return [cls.DOUBLE_RARE, cls.ULTRA_RARE, cls.HYPER_RARE, cls.MEGA_HYPER_RARE, cls.ILL_RARE, cls.SPEC_ILL_RARE, cls.ACE_SPEC_RARE, cls.SHINY_RARE, cls.SHINY_ULTRA_RARE, cls.SECRET_RARE, cls.PROMO,]
 
 class BulkCount(models.Model):
     rarity = models.CharField(
