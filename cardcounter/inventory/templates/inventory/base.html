@@ -16,11 +16,18 @@
             document.documentElement.classList.add("dark");
         }
     </script>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'inventory/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'inventory/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'inventory/favicon-16x16.png' %}">
+    <link rel="icon" href="{% static 'inventory/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'inventory/site.webmanifest' %}">
 </head>
 
 <body class="bg-yellow-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
     <nav class="bg-red-600 dark:bg-red-800 text-white px-6 py-4 flex items-center justify-between shadow-md">
         <div class="flex gap-6 font-semibold">
+            <a href="{% url 'dashboard' %}"> <img id="nav-logo"
+                    src="{% static 'inventory/favicon-32x32.png' %}" alt="Pokébulk logo" class="w-6 h-6 hover:scale-110 transition-transform duration-500"></a>
             <a href="{% url 'home' %}" class="hover:text-yellow-300 transition">Bulk</a>
             <a href="{% url 'cards' %}" class="hover:text-yellow-300 transition">Cards</a>
             <a href="{% url 'totals' %}" class="hover:text-yellow-300 transition">Totals</a>
@@ -50,6 +57,16 @@
             document.documentElement.classList.toggle("dark");
             localStorage.setItem("theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
         }
+    </script>
+    <script>
+        const navLogo = document.getElementById("nav-logo");
+        navLogo.addEventListener("mouseenter", () => {
+            const randomDegrees = Math.floor(Math.random() * 720) - 360;
+            navLogo.style.transform = `rotate(${randomDegrees}deg)`;
+        });
+        navLogo.addEventListener("mouseleave", () => {
+            navLogo.style.transform = "rotate(0deg)";
+        });
     </script>
 </body>
 

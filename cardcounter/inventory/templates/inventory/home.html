@@ -1,7 +1,8 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-<h1 class="text-3xl  text-red-600 dark:text-red-400 mb-6 text-center pt-4" style="font-family: 'Fredoka', sans-serif;">Bulk Counts</h1>
+<h1 class="text-3xl  text-red-600 dark:text-red-400 mb-6 text-center pt-4" style="font-family: 'Fredoka', sans-serif;">
+    Bulk Counts</h1>
 
 <form method="post" class="space-y-6">
     {% csrf_token %}
@@ -16,13 +17,19 @@
             </thead>
             <tbody class="divide-y divide-gray-200 dark:hover:bg-gray-700">
                 {% for bulk in bulk_counts %}
-                <tr class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+                <tr
+                    class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
                     <td class="px-4 py-3">{{ bulk.get_rarity_display }}</td>
                     <td class="px-4 py-3 font-semibold">{{ bulk.quantity }}</td>
                     <td class="px-4 py-3">
                         <input type="number" name="quantity_{{ bulk.rarity }}" min="0"
                             class="w-28 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-red-500">
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No bulk added yet!
+                        Add your first bulk count above.</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,38 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-red-600 dark:text-red-400 mb-2 text-center pt-4" style="font-family: 'Fredoka', sans-serif;"> Pokébulk Tracker </h1>
+<p class="text-center text-gray-500 dark:text-gray-400 mb-8">Your collection, at a glance.</p>
+
+<div class="bg-yellow-400 dark:bg-yellow-600 rounded-2xl rounded-2xl-2xl shadow-md p-6 mb-8 text-center">
+    <p class="text-red-900 dark:text-gray-900 font-semibold text-lg">Overall Estimated Value of Collection</p> 
+    <p class="text-red-900 dark:text-gray-900 font-bold text-4xl" style="font-family: 'Fredoka', sans-serif;">${{ grand_total|floatformat:2 }}</p>
+</div>
+
+<div class="grid grid-cols-2 sm:gird-cols-4 gap-4 mb-10">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Total Cards</p>
+        <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ total_card_count }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Card Value</p>
+        <p class="text-2xl font-bold text-red-600 dark:text-red-400">${{ total_value|floatformat:2 }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Total Bulk</p>
+        <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ total_bulk_count }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Bulk Value</p>
+        <p class="text-2xl font-bold text-red-600 dark:text-red-400">${{ total_bulk_value|floatformat:3 }}</p>
+    </div>
+</div>
+
+<h2 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-200 text-center pb-2">Quick Actions</h2>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <a href="{% url 'home' %}" class="bg-red-600 hover:bg-red-700 text-white text-center font-semibold px-6 py-4 rounded-2xl shadow transition no-underline">Update Bulk Counts</a>
+    <a href="{% url 'cards' %}" class="bg-blue-500 hover:bg-blue-600 text-white text-center font-semibold px-6 py-4 rounded-2xl shadow transition no-underline">Add / View Cards</a>
+    <a href="{% url 'totals' %}" class="bg-yellow-500 hover:bg-yellow-600 text-red-900 text-center font-semibold px-6 py-4 rounded-2xl shadow transition no-underline">View Full Total Breakdown</a>
+</div> 
+
+{% endblock %}

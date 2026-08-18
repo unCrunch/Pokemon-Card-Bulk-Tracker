@@ -15,6 +15,34 @@ BULK_RATES = {
     Rarity.RARE_REVERSE: Decimal("0.045"),
 }
 
+def dashboard(request):
+    card_entries = CardEntry.objects.all()
+    
+    total_value = card_entries.aggregate(
+        total=Coalesce(
+            Sum(F("quantity") *F("estimated_value"), output_field=DecimalField()), 0, output_field=DecimalField(),
+        )
+    ) ["total"]
+    total_card_count = card_entries.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
+    
+    bulk_counts = BulkCount.objects.all()
+    total_bulk_count = bulk_counts.aggregate(total=Coalesce(Sum("quantity"), 0))["total"]
+
+    total_bulk_value = sum(
+        bulk.quantity * BULK_RATES.get(bulk.rarity, Decimal("0"))
+        for bulk in bulk_counts
+    )
+    grand_total = total_value + total_bulk_value
+
+    context = {
+        "total_card_count": total_card_count,
+        "total_bulk_count": total_bulk_count,
+        "total_value": total_value,
+        "total_bulk_value": total_bulk_value,
+        "grand_total": grand_total,
+    }
+    return render(request, "inventory/dashboard.html", context)
+
 def totals(request):
     card_entries = CardEntry.objects.all()
     
