@@ -15,6 +15,14 @@ BULK_RATES = {
     Rarity.RARE_REVERSE: Decimal("0.045"),
 }
 
+SORTABLE_FIELDS = {
+    "name": "name",
+    "rarity": "rarity",
+    "set": "set_name",
+    "quantity": "quantity",
+    "value": "estimated_value",
+}
+
 def dashboard(request):
     card_entries = CardEntry.objects.all()
     
@@ -107,8 +115,18 @@ def cards(request):
     else:
         form = CardEntryForm()
     
-    card_entries = CardEntry.objects.all().order_by("-added_on")
-    context = {"form": form, "card_entries": card_entries}
+    sort = request.GET.get("sort", "-added_on")
+    sort_field = sort.lstrip("-")
+    
+    if sort_field in SORTABLE_FIELDS:
+        order_by_field = SORTABLE_FIELDS[sort_field]
+        if sort.startswith("-"):
+            order_by_field = f"-{order_by_field}"
+        card_entries = CardEntry.objects.all().order_by(order_by_field)
+    else:
+        card_entries = CardEntry.objects.all().order_by("-added_on")
+    
+    context = {"form": form, "card_entries": card_entries, "current_sort": sort}
     return render(request, "inventory/cards.html", context)
 
 def edit_card(request, card_id):

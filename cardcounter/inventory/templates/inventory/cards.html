@@ -27,32 +27,46 @@
     <table class="w-full text-left">
         <thead class="bg-yellow-400 dark:bg-yellow-600 text-red-900 dark:text-gray-900">
             <tr>
-                <th class="px-4 py-3 font-bold">Name</th>
-                <th class="px-4 py-3 font-bold">Rarity</th>
-                <th class="px-4 py-3 font-bold">Set</th>
-                <th class="px-4 py-3 font-bold">Quantity</th>
-                <th class="px-4 py-3 font-bold">Value</th>
+                <th class="px-4 py-3 font-bold"><a
+                        href="?sort={% if current_sort == 'name' %}-name{% else %}name{% endif %}"
+                        class="hover:underline">Name</a></th>
+                <th class="px-4 py-3 font-bold"><a
+                        href="?sort={% if current_sort == 'rarity' %}-rarity{% else %}rarity{% endif %}"
+                        class="hover:underline">Rarity</a></th>
+                <th class="px-4 py-3 font-bold"><a href="?sort=set" class="hover:underline">Set</a></th>
+                <th class="px-4 py-3 font-bold"><a
+                        href="?sort={% if current_sort == 'quantity' %}-quantity{% else %}quantity{% endif %}"
+                        class="hover:underline">Quantity</a></th>
+                <th class="px-4 py-3 font-bold"><a
+                        href="?sort={% if current_sort == 'value' %}-value{% else %}value{% endif %}"
+                        class="hover:underline">Value</a></th>
                 <th class="px-4 py-3 font-bold">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for card in card_entries %}
-            <tr class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+            <tr
+                class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
                 <td class="px-4 py-3">{{ card.name|default:"-" }}</td>
                 <td class="px-4 py-3">{{ card.get_rarity_display }}</td>
                 <td class="px-4 py-3">{{ card.set_name|default:"-" }}</td>
                 <td class="px-4 py-3">{{ card.quantity }}</td>
-                <td class="px-4 py-3">{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}</td>
+                <td class="px-4 py-3">{% if card.estimated_value %}${{ card.estimated_value }}{% else %}—{% endif %}
+                </td>
                 <td class="px-4 py-3 space-x-2 whitespace-nowrap">
-                    <a href="{% url 'edit_card' card.id %}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full transition no-underline">Edit</a>
-                    <form method="post" action="{% url 'del_card' card.id %}" class="inline" onsubmit="return confirm('Delete {{ card.name|default:'this card'|escapejs }}?');"> 
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1 rounded-full transition">Delete</button>
+                    <a href="{% url 'edit_card' card.id %}"
+                        class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full transition no-underline">Edit</a>
+                    <form method="post" action="{% url 'del_card' card.id %}" class="inline"
+                        onsubmit="return confirm('Delete {{ card.name|default:'this card'|escapejs }}?');">
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1 rounded-full transition">Delete</button>
                     </form>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No cards added yet! Add your first one above.</td>
+                <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No cards added yet!
+                    Add your first one above.</td>
             </tr>
             {% endfor %}
         </tbody>

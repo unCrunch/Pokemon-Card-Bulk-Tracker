@@ -50,7 +50,8 @@
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for bulk in bulk_breakdown %}
-            <tr class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
+            <tr
+                class="{% cycle 'bg-white dark:bg-gray-800' 'bg-yellow-50 dark:bg-gray-700' %} hover:bg-yellow-100 dark:hover:bg-gray-600 transition">
                 <td class="px-4 py-3">{{ bulk.label }}</td>
                 <td class="px-4 py-3">{{ bulk.quantity }}</td>
                 <td class="px-4 py-3">${{ bulk.value|floatformat:3 }}</td>
@@ -64,5 +65,6 @@
         </tbody>
     </table>
 </div>
-<p class="text-sm text-gray-500 dark:text-gray-400 italic mt-4">Estimated bulk values are rough per-card averages based on shop buy rates, not live market prices.</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 italic mt-4">Estimated bulk values are rough per-card averages based
+    on shop buy rates, not live market prices.</p>
 {% endblock %}

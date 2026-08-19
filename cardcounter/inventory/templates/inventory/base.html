@@ -1,7 +1,7 @@
 {% load static tailwind_tags %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 
 <head>
     <meta charset="UTF-8">
@@ -26,8 +26,8 @@
 <body class="bg-yellow-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
     <nav class="bg-red-600 dark:bg-red-800 text-white px-6 py-4 flex items-center justify-between shadow-md">
         <div class="flex gap-6 font-semibold">
-            <a href="{% url 'dashboard' %}"> <img id="nav-logo"
-                    src="{% static 'inventory/favicon-32x32.png' %}" alt="Pokébulk logo" class="w-6 h-6 hover:scale-110 transition-transform duration-500"></a>
+            <a href="{% url 'dashboard' %}"> <img id="nav-logo" src="{% static 'inventory/favicon-32x32.png' %}"
+                    alt="Pokébulk logo" class="w-6 h-6 hover:scale-110 transition-transform duration-500"></a>
             <a href="{% url 'home' %}" class="hover:text-yellow-300 transition">Bulk</a>
             <a href="{% url 'cards' %}" class="hover:text-yellow-300 transition">Cards</a>
             <a href="{% url 'totals' %}" class="hover:text-yellow-300 transition">Totals</a>
@@ -38,8 +38,8 @@
             <span class="hidden dark:inline">☀️ Light</span>
         </button>
     </nav>
-    {% if messages %}
     <main class="max-w-4xl mx-auto p-6">
+        {% if messages %}
         <ul class="mb-4 space-y-2">
             {% for message in messages %}
             <li
@@ -69,7 +69,8 @@
         });
     </script>
     <footer>
-        <p class="text-xs italic text-gray-400 mt-6"><a href="https://github.com/unCrunch" class="hover:underline">&copy;unCrunch</a> 2026</p>
+        <p class="text-xs italic text-gray-400 mt-6"><a href="https://github.com/unCrunch"
+                class="hover:underline">&copy;unCrunch</a> 2026</p>
     </footer>
 </body>
 
