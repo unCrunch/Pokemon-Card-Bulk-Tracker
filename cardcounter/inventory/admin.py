@@ -8,6 +8,6 @@ class BulkCountAdmin(admin.ModelAdmin):
 
 @admin.register(CardEntry)
 class CardEntryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'rarity', 'set_name', 'estimated_value', 'added_on')
-    list_filter = ('rarity',)
-    search_fields = ('name', 'set_name')
+    list_display = ('name', 'rarity', 'set', 'quantity', 'estimated_value', 'added_on')
+    list_filter = ('rarity', 'set')
+    search_fields = ('name',)

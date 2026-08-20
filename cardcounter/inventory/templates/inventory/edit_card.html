@@ -6,8 +6,8 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="hover:underline">Save Changes</button>
 </form>
 
-<a href="{% url 'cards' %}">Cancel</a>
+<a href="{% url 'cards' %}" class="hover:underline">Cancel</a>
 {% endblock %}

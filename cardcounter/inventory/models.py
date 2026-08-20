@@ -55,7 +55,6 @@ class CardEntry(models.Model):
         choices= Rarity.choices,
     ) 
     name = models.CharField(max_length= 200, blank= True)
-    set_name = models.CharField(max_length=200, blank=True)  # kept temporarily for migration
     set = models.ForeignKey(Set, on_delete=models.PROTECT, null=True, blank=True)
     quantity = models.PositiveIntegerField(default= 1)
     estimated_value = models.DecimalField(

@@ -18,7 +18,7 @@ BULK_RATES = {
 SORTABLE_FIELDS = {
     "name": "name",
     "rarity": "rarity",
-    "set": "set_name",
+    "set": "set__name",
     "quantity": "quantity",
     "value": "estimated_value",
 }
