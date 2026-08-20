@@ -27,19 +27,35 @@
     <table class="w-full text-left">
         <thead class="bg-yellow-400 dark:bg-yellow-600 text-red-900 dark:text-gray-900">
             <tr>
-                <th class="px-4 py-3 font-bold"><a
-                        href="?sort={% if current_sort == 'name' %}-name{% else %}name{% endif %}"
-                        class="hover:underline">Name</a></th>
-                <th class="px-4 py-3 font-bold"><a
-                        href="?sort={% if current_sort == 'rarity' %}-rarity{% else %}rarity{% endif %}"
-                        class="hover:underline">Rarity</a></th>
-                <th class="px-4 py-3 font-bold"><a href="?sort=set" class="hover:underline">Set</a></th>
-                <th class="px-4 py-3 font-bold"><a
-                        href="?sort={% if current_sort == 'quantity' %}-quantity{% else %}quantity{% endif %}"
-                        class="hover:underline">Quantity</a></th>
-                <th class="px-4 py-3 font-bold"><a
-                        href="?sort={% if current_sort == 'value' %}-value{% else %}value{% endif %}"
-                        class="hover:underline">Value</a></th>
+                <th class="px-4 py-3 font-bold">
+                    <a href="?sort={% if current_sort == 'name' %}-name{% else %}name{% endif %}"
+                        class="hover:underline">
+                        Name{% if current_sort == 'name' %} ▲{% elif current_sort == '-name' %} ▼{% endif %}
+                    </a>
+                </th>
+                <th class="px-4 py-3 font-bold">
+                    <a href="?sort={% if current_sort == 'rarity' %}-rarity{% else %}rarity{% endif %}"
+                        class="hover:underline">
+                        Rarity{% if current_sort == 'rarity' %} ▲{% elif current_sort == '-rarity' %} ▼{% endif %}
+                    </a>
+                </th>
+                <th class="px-4 py-3 font-bold">
+                    <a href="?sort={% if current_sort == 'set' %}-set{% else %}set{% endif %}" class="hover:underline">
+                        Set{% if current_sort == 'set' %} ▲{% elif current_sort == '-set' %} ▼{% endif %}
+                    </a>
+                </th>
+                <th class="px-4 py-3 font-bold">
+                    <a href="?sort={% if current_sort == 'quantity' %}-quantity{% else %}quantity{% endif %}"
+                        class="hover:underline">
+                        Quantity{% if current_sort == 'quantity' %} ▲{% elif current_sort == '-quantity' %} ▼{% endif %}
+                    </a>
+                </th>
+                <th class="px-4 py-3 font-bold">
+                    <a href="?sort={% if current_sort == 'value' %}-value{% else %}value{% endif %}"
+                        class="hover:underline">
+                        Value{% if current_sort == 'value' %} ▲{% elif current_sort == '-value' %} ▼{% endif %}
+                    </a>
+                </th>
                 <th class="px-4 py-3 font-bold">Actions</th>
             </tr>
         </thead>
