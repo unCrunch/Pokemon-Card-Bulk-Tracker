@@ -36,14 +36,26 @@ class BulkCount(models.Model):
     
     def __str__(self):
         return f"{self.get_rarity_display()}: {self.quantity}"
-    
+  
+class Set(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    code = models.CharField(max_length=20, blank=True)
+    available_rarities = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class CardEntry(models.Model):
     rarity = models.CharField(
         max_length= 32,
         choices= Rarity.choices,
     ) 
     name = models.CharField(max_length= 200, blank= True)
-    set_name = models.CharField(max_length= 200, blank= True)
+    set = models.ForeignKey(Set, on_delete=models.PROTECT, null=True, blank=True)
     quantity = models.PositiveIntegerField(default= 1)
     estimated_value = models.DecimalField(
         max_digits= 8,
