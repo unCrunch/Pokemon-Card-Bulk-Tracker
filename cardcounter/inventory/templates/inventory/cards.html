@@ -74,8 +74,11 @@
                         class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full transition no-underline">Edit</a>
                     <form method="post" action="{% url 'del_card' card.id %}" class="inline"
                         onsubmit="return confirm('Delete {{ card.name|default:'this card'|escapejs }}?');">
+                        {% csrf_token %}
                         <button type="submit"
-                            class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1 rounded-full transition">Delete</button>
+                            class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1 rounded-full transition">
+                            Delete
+                        </button>
                     </form>
                 </td>
             </tr>
