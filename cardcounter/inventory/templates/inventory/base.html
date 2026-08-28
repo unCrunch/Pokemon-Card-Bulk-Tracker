@@ -28,9 +28,11 @@
         <div class="flex gap-6 font-semibold">
             <a href="{% url 'dashboard' %}"> <img id="nav-logo" src="{% static 'inventory/favicon-32x32.png' %}"
                     alt="Pokébulk logo" class="w-6 h-6 hover:scale-110 transition-transform duration-500"></a>
+            
             <a href="{% url 'home' %}" class="hover:text-yellow-300 transition">Bulk</a>
             <a href="{% url 'cards' %}" class="hover:text-yellow-300 transition">Cards</a>
             <a href="{% url 'totals' %}" class="hover:text-yellow-300 transition">Totals</a>
+            <a href="{% url 'packs' %}" class="hover:text-yellow-300 transition">Pack Opener</a>
         </div>
         <button onclick="toggleTheme()"
             class="bg-yellow-400 text-red-800 px-3 py-1 rounded-full font-bold text-sm hover:bg-yellow-300 transition">

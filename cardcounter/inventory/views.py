@@ -23,6 +23,9 @@ SORTABLE_FIELDS = {
     "value": "estimated_value",
 }
 
+def packs(request):
+    return render(request, "inventory/packs.html")
+
 def dashboard(request):
     card_entries = CardEntry.objects.all()
     
