@@ -24,7 +24,8 @@
             <p id="card-name-label" class="text-2xl font-bold" style="font-family: 'Fredoka', sans-serif;"></p>
         </div>
         <p class="text-center mt-3 text-sm text-gray-500 dark:text-gray-400">Card <span id="card-progress">1</span> of
-            10 &mdash; click to reveal</p>
+            <span id="card-total">11</span> &mdash; click to reveal
+        </p>
     </div>
 
     <div id="summary-stage" class="hidden w-full">
@@ -43,170 +44,226 @@
 <div>
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Pack Collection</h2>
-        <button onclick="clearColleciton()" class="text-sm text-red-600 dark:text-red-400 hover:underline cursor-pointer">Clear Collection</button>
+        <button onclick="clearCollection()"
+            class="text-sm text-red-600 dark:text-red-400 hover:underline cursor-pointer">Clear Collection</button>
     </div>
     <div id="collection-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3"></div>
-    <p id="collection-empty" class="text-center text-gray-500 dark:text-gray-400 py-6">Nothing pulled yet! Open a pack above.</p>
+    <p id="collection-empty" class="text-center text-gray-500 dark:text-gray-400 py-6">Nothing pulled yet! Open a pack
+        above.</p>
 </div>
 
 <script>
-const POKEMON_151 = [
-"Bulbasaur","Ivysaur","Venusaur","Charmander","Charmeleon","Charizard","Squirtle","Wartortle",
-"Blastoise","Caterpie","Metapod","Butterfree","Weedle","Kakuna","Beedrill","Pidgey","Pidgeotto",
-"Pidgeot","Rattata","Raticate","Spearow","Fearow","Ekans","Arbok","Pikachu","Raichu","Sandshrew",
-"Sandslash","Nidoran\u2640","Nidorina","Nidoqueen","Nidoran\u2642","Nidorino","Nidoking","Clefairy",
-"Clefable","Vulpix","Ninetales","Jigglypuff","Wigglytuff","Zubat","Golbat","Oddish","Gloom",
-"Vileplume","Paras","Parasect","Venonat","Venomoth","Diglett","Dugtrio","Meowth","Persian",
-"Psyduck","Golduck","Mankey","Primeape","Growlithe","Arcanine","Poliwag","Poliwhirl","Poliwrath",
-"Abra","Kadabra","Alakazam","Machop","Machoke","Machamp","Bellsprout","Weepinbell","Victreebel",
-"Tentacool","Tentacruel","Geodude","Graveler","Golem","Ponyta","Rapidash","Slowpoke","Slowbro",
-"Magnemite","Magneton","Farfetch'd","Doduo","Dodrio","Seel","Dewgong","Grimer","Muk","Shellder",
-"Cloyster","Gastly","Haunter","Gengar","Onix","Drowzee","Hypno","Krabby","Kingler","Voltorb",
-"Electrode","Exeggcute","Exeggutor","Cubone","Marowak","Hitmonlee","Hitmonchan","Lickitung",
-"Koffing","Weezing","Rhyhorn","Rhydon","Chansey","Tangela","Kangaskhan","Horsea","Seadra",
-"Goldeen","Seaking","Staryu","Starmie","Mr. Mime","Scyther","Jynx","Electabuzz","Magmar",
-"Pinsir","Tauros","Magikarp","Gyarados","Lapras","Ditto","Eevee","Vaporeon","Jolteon","Flareon",
-"Porygon","Omanyte","Omastar","Kabuto","Kabutops","Aerodactyl","Snorlax","Articuno","Zapdos",
-"Moltres","Dratini","Dragonair","Dragonite","Mewtwo","Mew"
-];
- 
-const WEIGHTED_RARITIES = [
-    { key: "COMMON_UNCOMMON", label: "Common / Uncommon", weight: 55, color: "gray" },
-    { key: "COMMON_UNCOMMON_REVERSE", label: "Reverse Holo", weight: 20, color: "gray" },
-    { key: "RARE_HOLO", label: "Rare (Holo)", weight: 10, color: "blue" },
-    { key: "RARE_REVERSE", label: "Rare (Reverse Holo)", weight: 6, color: "blue" },
-    { key: "DOUBLE_RARE", label: "Double Rare", weight: 4, color: "green" },
-    { key: "ULTRA_RARE", label: "Ultra Rare", weight: 2, color: "purple" },
-    { key: "HYPER_RARE", label: "Hyper Rare", weight: 1.2, color: "amber" },
-    { key: "MEGA_HYPER_RARE", label: "Mega Hyper Rare", weight: 0.5, color: "amber" },
-    { key: "ILL_RARE", label: "Illustration Rare", weight: 0.8, color: "pink" },
-    { key: "SPEC_ILL_RARE", label: "Special Illustration Rare", weight: 0.3, color: "pink" },
-    { key: "SECRET_RARE", label: "Secret Rare", weight: 0.2, color: "red" },
-];
- 
-function weightedRandomRarity() {
-    const totalWeight = WEIGHTED_RARITIES.reduce((sum, r) => sum + r.weight, 0);
-    let roll = Math.random() * totalWeight;
-    for (const r of WEIGHTED_RARITIES) {
-        if (roll < r.weight) return r;
-        roll -= r.weight;
-    }
-    return WEIGHTED_RARITIES[0];
-}
- 
-function randomPokemon() {
-    return POKEMON_151[Math.floor(Math.random() * POKEMON_151.length)];
-}
- 
-function generatePack() {
-    const cards = [];
-    cards.push({ rarityLabel: "Energy", pokemon: null, isEnergy: true });
-    for (let i = 0; i < 9; i++) {
-        const rarity = weightedRandomRarity();
-        cards.push({ rarityLabel: rarity.label, pokemon: randomPokemon(), isEnergy: false });
-    }
-    return cards;
-}
- 
-let currentPack = [];
-let revealIndex = 0;
- 
-function handlePackClick() {
-    currentPack = generatePack();
-    revealIndex = 0;
-    document.getElementById("pack-stage").classList.add("hidden");
-    document.getElementById("reveal-stage").classList.remove("hidden");
-    showCard(revealIndex);
-}
- 
-function showCard(index) {
-    const card = currentPack[index];
-    document.getElementById("card-rarity-label").textContent = card.isEnergy ? "Energy" : card.rarityLabel;
-    document.getElementById("card-name-label").textContent = card.isEnergy ? "Basic Energy" : card.pokemon;
-    document.getElementById("card-progress").textContent = index + 1;
-}
- 
-function revealNext() {
-    revealIndex++;
-    if (revealIndex < currentPack.length) {
-        showCard(revealIndex);
-    } else {
-        finishPack();
-    }
-}
- 
-function finishPack() {
-    document.getElementById("reveal-stage").classList.add("hidden");
-    document.getElementById("summary-stage").classList.remove("hidden");
- 
-    const grid = document.getElementById("summary-grid");
-    grid.innerHTML = "";
-    currentPack.forEach(card => {
-        const div = document.createElement("div");
-        div.className = "bg-white dark:bg-gray-800 rounded-xl shadow p-3 text-center";
-        div.innerHTML = `
-            <p class="text-xs uppercase text-gray-400 dark:text-gray-500">${card.isEnergy ? "Energy" : card.rarityLabel}</p>
-            <p class="font-semibold text-sm mt-1">${card.isEnergy ? "Basic Energy" : card.pokemon}</p>
-        `;
-        grid.appendChild(div);
-    });
- 
-    saveToCollection(currentPack);
-    renderCollection();
-}
- 
-function resetPack() {
-    document.getElementById("summary-stage").classList.add("hidden");
-    document.getElementById("pack-stage").classList.remove("hidden");
-}
- 
-function getCollection() {
-    const raw = localStorage.getItem("pokebulk_pack_collection");
-    return raw ? JSON.parse(raw) : [];
-}
- 
-function saveToCollection(pack) {
-    const collection = getCollection();
-    pack.forEach(card => {
-        if (!card.isEnergy) {
-            collection.push({ pokemon: card.pokemon, rarity: card.rarityLabel, pulledAt: new Date().toISOString() });
+
+    // pokemon and card pulls
+    const POKEMON_151 = [
+        "Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle",
+        "Blastoise", "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto",
+        "Pidgeot", "Rattata", "Raticate", "Spearow", "Fearow", "Ekans", "Arbok", "Pikachu", "Raichu", "Sandshrew",
+        "Sandslash", "Nidoran\u2640", "Nidorina", "Nidoqueen", "Nidoran\u2642", "Nidorino", "Nidoking", "Clefairy",
+        "Clefable", "Vulpix", "Ninetales", "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom",
+        "Vileplume", "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth", "Persian",
+        "Psyduck", "Golduck", "Mankey", "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath",
+        "Abra", "Kadabra", "Alakazam", "Machop", "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel",
+        "Tentacool", "Tentacruel", "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", "Slowbro",
+        "Magnemite", "Magneton", "Farfetch'd", "Doduo", "Dodrio", "Seel", "Dewgong", "Grimer", "Muk", "Shellder",
+        "Cloyster", "Gastly", "Haunter", "Gengar", "Onix", "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb",
+        "Electrode", "Exeggcute", "Exeggutor", "Cubone", "Marowak", "Hitmonlee", "Hitmonchan", "Lickitung",
+        "Koffing", "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela", "Kangaskhan", "Horsea", "Seadra",
+        "Goldeen", "Seaking", "Staryu", "Starmie", "Mr. Mime", "Scyther", "Jynx", "Electabuzz", "Magmar",
+        "Pinsir", "Tauros", "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon", "Jolteon", "Flareon",
+        "Porygon", "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl", "Snorlax", "Articuno", "Zapdos",
+        "Moltres", "Dratini", "Dragonair", "Dragonite", "Mewtwo", "Mew"
+    ];
+
+    const ENERGY_TYPES = ["Water", "Fire", "Grass", "Lightning", "Psychic", "Fighting", "Darkness", "Metal"];
+
+    const SLOT9_POOL = [
+        { label: "Common / Uncommon (Reverse Holo)", weight: 75 },
+        { label: "Rare (Reverse Holo)", weight: 25 },
+    ];
+
+    const SLOT10_POOL = [
+        { label: "Common / Uncommon (Reverse Holo)", weight: 55 },
+        { label: "Rare (Reverse Holo)", weight: 33 },
+        { label: "Illustration Rare", weight: 10 },
+        { label: "Special Illustration Rare", weight: 2 },
+    ];
+
+    const SLOT11_POOL = [
+        { label: "Rare (Holo)", weight: 45 },
+        { label: "Double Rare", weight: 30 },
+        { label: "Ultra Rare", weight: 15 },
+        { label: "Hyper Rare", weight: 6 },
+        { label: "Mega Hyper Rare", weight: 2.5 },
+        { label: "Secret Rare", weight: 1.5 },
+    ];
+
+    const GOD_PACK_POOL = [
+        { label: "Double Rare", weight: 30 },
+        { label: "Ultra Rare", weight: 22 },
+        { label: "Illustration Rare", weight: 18 },
+        { label: "Hyper Rare", weight: 12 },
+        { label: "Special Illustration Rare", weight: 10 },
+        { label: "Mega Hyper Rare", weight: 5 },
+        { label: "Secret Rare", weight: 3 },
+    ];
+
+    const GOD_PACK_CHANCE = 0.002;
+
+    // functions
+
+    function weightedPick(pool) {
+        const totalWeight = pool.reduce((sum, r) => sum + r.weight, 0);
+        let roll = Math.random() * totalWeight;
+        for (const r of pool) {
+            if (roll < r.weight) return r;
+            roll -= r.weight;
         }
-    });
-    localStorage.setItem("pokebulk_pack_collection", JSON.stringify(collection));
-}
- 
-function clearCollection() {
-    if (confirm("Clear your entire pack collection? This cannot be undone.")) {
-        localStorage.removeItem("pokebulk_pack_collection");
+        return pool[0];
+    }
+
+    function randomPokemon() {
+        return POKEMON_151[Math.floor(Math.random() * POKEMON_151.length)];
+    }
+
+    function randomEnergyType() {
+        return ENERGY_TYPES[Math.floor(Math.random() * ENERGY_TYPES.length)];
+    }
+
+    function splitCommonUncommonLabel(label) {
+        if (label === "Common / Uncommon (Reverse Holo)") {
+            return Math.random() < 0.5 ? "Common (Reverse Holo)" : "Uncommon (Reverse Holo)";
+        }
+        return label;
+    }
+
+    function generatePack() {
+        const isGodPack = Math.random() < GOD_PACK_CHANCE;
+        const cards = [];
+
+        cards.push({ rarityLabel: "Energy", pokemon: null, energyType: randomEnergyType(), isEnergy: true });
+
+        if (isGodPack) {
+            for (let i = 0; i < 9; i++) {
+                const rarity = weightedPick(GOD_PACK_POOL);
+                cards.push({ rarityLabel: rarity.label, pokemon: randomPokemon(), isEnergy: false });
+            }
+        } else {
+            for (let i = 0; i < 4; i++) {
+                cards.push({ rarityLabel: "Common", pokemon: randomPokemon(), isEnergy: false });
+            }
+            for (let i = 0; i < 3; i++) {
+                cards.push({ rarityLabel: "Uncommon", pokemon: randomPokemon(), isEnergy: false });
+            }
+            cards.push({ rarityLabel: splitCommonUncommonLabel(weightedPick(SLOT9_POOL).label), pokemon: randomPokemon(), isEnergy: false });
+            cards.push({ rarityLabel: splitCommonUncommonLabel(weightedPick(SLOT10_POOL).label), pokemon: randomPokemon(), isEnergy: false });
+            cards.push({ rarityLabel: weightedPick(SLOT11_POOL).label, pokemon: randomPokemon(), isEnergy: false });
+        }
+
+        cards.isGodPack = isGodPack;
+        return cards;
+    }
+
+    let currentPack = [];
+    let revealIndex = 0;
+
+    function handlePackClick() {
+        currentPack = generatePack();
+        revealIndex = 0;
+        document.getElementById("pack-stage").classList.add("hidden");
+        document.getElementById("reveal-stage").classList.remove("hidden");
+        showCard(revealIndex);
+    }
+
+    function showCard(index) {
+        const card = currentPack[index];
+        document.getElementById("card-rarity-label").textContent = card.isEnergy ? "Energy" : card.rarityLabel;
+        document.getElementById("card-name-label").textContent = card.isEnergy ? `${card.energyType} Energy` : card.pokemon;
+        document.getElementById("card-progress").textContent = index + 1;
+        document.getElementById("card-total").textContent = currentPack.length;
+    }
+
+    function revealNext() {
+        revealIndex++;
+        if (revealIndex < currentPack.length) {
+            showCard(revealIndex);
+        } else {
+            finishPack();
+        }
+    }
+
+    function finishPack() {
+        document.getElementById("reveal-stage").classList.add("hidden");
+        document.getElementById("summary-stage").classList.remove("hidden");
+
+        const grid = document.getElementById("summary-grid");
+        grid.innerHTML = "";
+        currentPack.forEach(card => {
+            const div = document.createElement("div");
+            div.className = "bg-white dark:bg-gray-800 rounded-xl shadow p-3 text-center";
+            div.innerHTML = `
+            <p class="text-xs uppercase text-gray-400 dark:text-gray-500">${card.isEnergy ? "Energy" : card.rarityLabel}</p>
+            <p class="font-semibold text-sm mt-1">${card.isEnergy ? card.energyType + " Energy" : card.pokemon}</p>
+        `;
+            grid.appendChild(div);
+        });
+
+        saveToCollection(currentPack);
         renderCollection();
     }
-}
- 
-function renderCollection() {
-    const collection = getCollection();
-    const grid = document.getElementById("collection-grid");
-    const emptyMsg = document.getElementById("collection-empty");
- 
-    if (collection.length === 0) {
-        grid.innerHTML = "";
-        emptyMsg.classList.remove("hidden");
-        return;
+
+    function resetPack() {
+        document.getElementById("summary-stage").classList.add("hidden");
+        document.getElementById("pack-stage").classList.remove("hidden");
     }
-    emptyMsg.classList.add("hidden");
- 
-    grid.innerHTML = "";
-    [...collection].reverse().forEach(card => {
-        const div = document.createElement("div");
-        div.className = "bg-white dark:bg-gray-800 rounded-xl shadow p-3 text-center";
-        div.innerHTML = `
+
+    function getCollection() {
+        const raw = localStorage.getItem("pokebulk_pack_collection");
+        return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveToCollection(pack) {
+        const collection = getCollection();
+        pack.forEach(card => {
+            if (!card.isEnergy) {
+                collection.push({ pokemon: card.pokemon, rarity: card.rarityLabel, pulledAt: new Date().toISOString() });
+            }
+        });
+        localStorage.setItem("pokebulk_pack_collection", JSON.stringify(collection));
+    }
+
+    function clearCollection() {
+        if (confirm("Clear your entire pack collection? This cannot be undone.")) {
+            localStorage.removeItem("pokebulk_pack_collection");
+            renderCollection();
+        }
+    }
+
+    function renderCollection() {
+        const collection = getCollection();
+        const grid = document.getElementById("collection-grid");
+        const emptyMsg = document.getElementById("collection-empty");
+
+        if (collection.length === 0) {
+            grid.innerHTML = "";
+            emptyMsg.classList.remove("hidden");
+            return;
+        }
+        emptyMsg.classList.add("hidden");
+
+        grid.innerHTML = "";
+        [...collection].reverse().forEach(card => {
+            const div = document.createElement("div");
+            div.className = "bg-white dark:bg-gray-800 rounded-xl shadow p-3 text-center";
+            div.innerHTML = `
             <p class="text-xs uppercase text-gray-400 dark:text-gray-500">${card.rarity}</p>
             <p class="font-semibold text-sm mt-1">${card.pokemon}</p>
         `;
-        grid.appendChild(div);
-    });
-}
- 
-renderCollection();
+            grid.appendChild(div);
+        });
+    }
+
+    renderCollection();
 </script>
 
 {% endblock %}
