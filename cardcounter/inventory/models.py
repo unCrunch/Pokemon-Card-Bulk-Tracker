@@ -70,3 +70,17 @@ class CardEntry(models.Model):
     def __str__(self):
         label = self.name or self.get_rarity_display()
         return f"{label} x{self.quantity}"
+
+class KnownCard(models.Model):
+    name = models.CharField(max_length=200)
+    set = models.ForeignKey(Set, on_delete=models.CASCADE, related_name="known_cards")
+    card_number = models.CharField(max_length=20, blank=True)
+    rarity = models.CharField(max_length=32, choices=Rarity.choices, blank=True)
+    
+    class Meta:
+        ordering = ["set", "card_number"]
+        unique_together = ["name", "set", "card_number"]
+    
+    def __str__(self):
+        number = f"#{self.card_number}" if self.card_number else ""
+        return f"{self.name} {number} ({self.set.name})"

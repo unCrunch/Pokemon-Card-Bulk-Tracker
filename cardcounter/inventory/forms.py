@@ -16,7 +16,7 @@ class CardEntryForm(forms.ModelForm):
     
     class Meta:
         model = CardEntry
-        fields = ["rarity", "name", "quantity", "estimated_value"]
+        fields = ["rarity", "name", "set", "quantity", "estimated_value"]
         widgets = {
             "name": forms.TextInput(attrs={"class": INPUT_CLASSES}),
             "quantity": forms.TextInput(attrs={"class": INPUT_CLASSES}),
