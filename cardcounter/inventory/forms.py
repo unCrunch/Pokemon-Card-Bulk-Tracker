@@ -22,3 +22,12 @@ class CardEntryForm(forms.ModelForm):
             "quantity": forms.TextInput(attrs={"class": INPUT_CLASSES}),
             "estimated_value": forms.TextInput(attrs={"class": INPUT_CLASSES}),
         }
+
+class KnownCardImportForm(forms.Form):
+    set = forms.ModelChoiceField(
+        queryset=Set.objects.all(),
+        widget=forms.Select(attrs={"class": INPUT_CLASSES})
+    )
+    csv_file = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={"class": INPUT_CLASSES}),
+    )

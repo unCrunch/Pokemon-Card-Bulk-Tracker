@@ -1,11 +1,14 @@
+import csv
+import io
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 
-from .models import BulkCount, Rarity, CardEntry
-from .forms import CardEntryForm
+from .models import BulkCount, Rarity, CardEntry, KnownCard
+from .forms import CardEntryForm, KnownCardImportForm
 
 # rough estimates in CAD for bulk prices based on local shops
 BULK_RATES = {
@@ -180,3 +183,49 @@ def home(request):
     bulk_counts = BulkCount.objects.all()
     context = {"bulk_counts": bulk_counts}
     return render(request, "inventory/home.html", context)
+
+def import_known_cards(request):
+    if request.method == "POST":
+        form = KnownCardImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            selected_set = form.cleaned_data["set"]
+            csv_file = form.cleaned_data["csv_file"]
+            
+            decoded = csv_file.read().decode("utf-8-sig")
+            reader = csv.DictReader(io.StringIO(decoded))
+            
+            created_count = 0
+            skipped_rows = []
+            
+            for row in reader:
+                name = (row.get("name") or "").strip()
+                card_number = (row.get("card_number") or "").strip()
+                rarity_raw = (row.get("rarity") or "").strip()
+                
+                if not name:
+                    skipped_rows.append(row)
+                    continue
+                
+                rarity_value = ""
+                for choice_value, choice_label in Rarity.choices:
+                    if rarity_raw.lower() == choice_label.lower() or rarity_raw.upper() == choice_value:
+                        rarity_value = choice_value
+                        break
+                    
+                    KnownCard.objects.get_or_create(
+                        name=name,
+                        set=selected_set,
+                        card_number=card_number,
+                        defaults={"rarity": rarity_value},
+                    )
+                    created_count += 1
+                    
+                    messages.success(request, f"Imported {created_count} cards into {selected_set.name}.")
+                    if skipped_rows:
+                        messages.warning(request, f"Skipped {len(skipped_rows)} row(s) missing a name.")
+                        return redirect("import_known_cards")
+                    else:
+                        form = KnownCardImportForm()
+                    
+                    context = {"form": form}
+                    return render(request, "inventory/import_known_cards.html", context)

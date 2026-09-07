@@ -10,4 +10,5 @@ urlpatterns = [
     path("card/<int:card_id>/edit", views.edit_card, name="edit_card"),
     path("packs/", views.packs, name="packs"),
     path("__reload__/", include("django_browser_reload.urls")),
+    path("import-cards/", views.import_known_cards, name="import_known_cards"),
 ]
