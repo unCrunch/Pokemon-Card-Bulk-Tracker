@@ -40,6 +40,7 @@ class BulkCount(models.Model):
 class Set(models.Model):
     name = models.CharField(max_length=200, unique=True)
     code = models.CharField(max_length=20, blank=True)
+    generation = models.CharField(max_length=100, blank=True)
     available_rarities = models.JSONField(default=list, blank=True)
 
     class Meta:
