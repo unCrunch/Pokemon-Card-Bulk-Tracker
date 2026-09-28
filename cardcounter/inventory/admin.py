@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BulkCount, CardEntry, Set
+from .models import BulkCount, CardEntry, Set, KnownCard, Purchase
 
 # Register your models here.
 @admin.register(BulkCount)
@@ -15,3 +15,8 @@ class CardEntryAdmin(admin.ModelAdmin):
 @admin.register(Set)
 class SetAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'generation')
+    
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ('product', 'set', 'paid', 'returns', 'date')
+    list_filter = ('product', 'set')

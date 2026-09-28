@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 # Create your models here.
 class Rarity(models.TextChoices):
@@ -85,3 +86,46 @@ class KnownCard(models.Model):
     def __str__(self):
         number = f"#{self.card_number}" if self.card_number else ""
         return f"{self.name} {number} ({self.set.name})"
+    
+class Product(models.TextChoices):
+    BOOSTER_PACK = "BOOSTER_PACK", "Booster Pack"
+    ETB = "ETB", "Elite Trainer Box (ETB)"
+    BOOSTER_BUNDLE = "BOOSTER_BUNDLE", "Booster Bundle (6 packs)"
+    MINI_TIN = "MINI_TIN", "Mini Tin (2 packs)"
+    POKE_BALL_TIN = "POKE_BALL_TIN", "Poké Ball Tin (3 packs)"
+    TIN = "TIN", "Regular Tin (4-5 packs)"
+    COLLECTION_BOX = "COLLECTION_BOX", "Collection Box"
+    BOOSTER_BOX = "BOOSTER_BOX", "Booster Box (36 packs)"
+    PREBUILT_DECK = "PREBUILT_DECK", "Prebuilt Deck"
+    BUILD_BATTLE = "BUILD_BATTLE", "Build & Battle"
+    UPC = "UPC", "Ultra Premium Collection (UPC)"
+    TOURNAMENT = "TOURNAMENT", "Tournament Collection"
+    CHEST = "CHEST", "Collector's Chest / Lunchbox"
+    TOOLKIT = "TOOLKIT", "Trainer's Toolkit"
+    MISC = "MISC", "Misc"
+
+class Purchase(models.Model):
+    product = models.CharField(max_length=32, choices=Product.choices)
+    set = models.ForeignKey(Set, on_delete=models.SET_NULL, null=True, blank=True)
+    paid = models.DecimalField(max_digits=8, decimal_places=2)
+    returns = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    date = models.DateField(default=date.today)
+    notes = models.TextField(blank=True)
+    
+    class Meta:
+        ordering = ["-date", "-id"]
+        
+    @property
+    def profit(self):
+        if self.returns is None:
+            return None
+        return self.returns - self.paid
+    
+    @property
+    def roi(self):
+        if self.returns is None or self.paid == 0:
+            return None
+        return (self.profit / self.paid) * 100
+    
+    def __str__(self):
+        return f"{self.get_product_display()} ({self.date})"
