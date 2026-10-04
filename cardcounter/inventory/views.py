@@ -7,8 +7,8 @@ from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 
-from .models import BulkCount, Rarity, CardEntry, KnownCard
-from .forms import CardEntryForm, KnownCardImportForm
+from .models import BulkCount, Rarity, CardEntry, KnownCard, Purchase
+from .forms import CardEntryForm, KnownCardImportForm, PurchaseForm
 
 # rough estimates in CAD for bulk prices based on local shops
 BULK_RATES = {
@@ -25,6 +25,8 @@ SORTABLE_FIELDS = {
     "quantity": "quantity",
     "value": "estimated_value",
 }
+
+COLLECTR_URL = "https://app.getcollectr.com/sets/category/3"
 
 def packs(request):
     return render(request, "inventory/packs.html")
@@ -231,3 +233,52 @@ def import_known_cards(request):
     context = {"form": form}
     return render(request, "inventory/import_known_cards.html", context)
 
+#note: only purchases that have a return count toward the total, win rate, and total spent. pending ones are shown but kept out of the math, so a product you havent opened yet doesnt show up as a loss
+def profit(request):
+    if request.method == "POST":
+        form = PurchaseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("profit")
+    else:
+        form = PurchaseForm()
+    
+    purchases = list(Purchase.objects.select_related("set"))
+    resolved = [p for p in purchases if p.returns is not None]
+    
+    total_profit = sum((p.profit for p in resolved), Decimal("0"))
+    total_spent = sum((p.paid for p in resolved), Decimal("0"))
+    wins = sum(1 for p in resolved if p.profit > 0)
+    win_rate = (wins / len(resolved) * 100) if resolved else None
+    
+    context = {
+        "form": form,
+        "purchases": purchases,
+        "total_profit": total_profit,
+        "total_abs": abs(total_profit),
+        "total_spent": total_spent,
+        "win_rate": win_rate,
+        "wins": wins,
+        "resolved_count": len(resolved),
+        "pending_count": len(purchases) - len(resolved),
+        "collectr_url": COLLECTR_URL,
+    }
+    return render(request, "inventory/profit.html", context)
+
+def purchase_detail(request, purchase_id):
+    purchase = get_object_or_404(Purchase, id=purchase_id)
+    return render(request, "inventory/purchase_detail.html", {"purchase": purchase})
+
+def edit_purchase(request, purchase_id):
+    purchase = get_object_or_404(Purchase, id=purchase_id)
+    if request.method == "POST":
+        form = PurchaseForm(request.POST, instance=purchase)
+        if form.is_valid():
+            form.save()
+            return redirect("purchase_detail", purchase_id=purchase.id)
+
+def del_purchase(request, purchase_id):
+    purchase = get_object_or_404(Purchase, id=purchase_id)
+    if request.method == "POST":
+        purchase.delete()
+    return redirect("profit")

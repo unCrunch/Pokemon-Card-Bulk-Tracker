@@ -11,4 +11,8 @@ urlpatterns = [
     path("packs/", views.packs, name="packs"),
     path("__reload__/", include("django_browser_reload.urls")),
     path("import-cards/", views.import_known_cards, name="import_known_cards"),
+    path("profit/", views.profit, name="profit"),
+    path("profit/<int:purchase_id>/", views.purchase_detail, name="purchase_detail"),
+    path("profit/<int:purchase_id>/edit", views.edit_purchase, name="edit_purchase"),
+    path("profit/<int:purchase_id>/delete", views.del_purchase, name="del_purchase"),
 ]

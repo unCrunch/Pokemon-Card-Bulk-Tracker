@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from .models import CardEntry, Rarity, Set
+from .models import CardEntry, Rarity, Set, Purchase
 
 INPUT_CLASSES = "w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
 
@@ -44,3 +44,16 @@ class KnownCardImportForm(forms.Form):
             )
         
         self.fields["set"].choices = [(gen, choices) for gen, choices in grouped_choices.items()]
+        
+class PurchaseForm(forms.ModelForm):
+    class Meta: 
+        model = Purchase
+        fields = ["product", "set", "paid", "returns", "date", "notes"]
+        widgets = {
+            "product": forms.Select(attrs={"class": INPUT_CLASSES}),
+            "set": forms.Select(attrs={"class": INPUT_CLASSES}),
+            "paid": forms.NumberInput(attrs={"class": INPUT_CLASSES, "step": "0.01", "min": "0"}),
+            "returns": forms.NumberInput(attrs={"class": INPUT_CLASSES, "step": "0.01", "min": "0"}),
+            "date": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date", "class": INPUT_CLASSES}), #makes the date prefill correctly when you edit a purchase
+            "notes": forms.Textarea(attrs={"class": INPUT_CLASSES, "rows": 3}),
+        }

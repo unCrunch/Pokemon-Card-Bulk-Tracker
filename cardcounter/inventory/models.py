@@ -127,5 +127,14 @@ class Purchase(models.Model):
             return None
         return (self.profit / self.paid) * 100
     
+    @property #lets template print -$8.00 instead of $-8.00
+    def profit_abs(self):
+        return abs(self.profit) if self.profit is None else None
+    
+    @property 
+    def is_win(self):
+        return self.profit is not None and self.profit >0
+    
     def __str__(self):
         return f"{self.get_product_display()} ({self.date})"
+    
